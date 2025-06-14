@@ -1,6 +1,7 @@
 import { defineDocumentType, makeSource } from "contentlayer/source-files"
+import rehypeSlug from "rehype-slug"
+import rehypeAutolinkHeadings from "rehype-autolink-headings"
 
-/** @type {import('contentlayer/source-files').ComputedFields} */
 const computedFields = {
   slug: {
     type: "string",
@@ -17,13 +18,8 @@ export const Page = defineDocumentType(() => ({
   filePathPattern: `pages/**/*.mdx`,
   contentType: "mdx",
   fields: {
-    title: {
-      type: "string",
-      required: true,
-    },
-    description: {
-      type: "string",
-    },
+    title: { type: "string", required: true },
+    description: { type: "string" },
   },
   computedFields,
 }))
@@ -33,17 +29,9 @@ export const Post = defineDocumentType(() => ({
   filePathPattern: `posts/**/*.mdx`,
   contentType: "mdx",
   fields: {
-    title: {
-      type: "string",
-      required: true,
-    },
-    description: {
-      type: "string",
-    },
-    date: {
-      type: "date",
-      required: true,
-    },
+    title: { type: "string", required: true },
+    description: { type: "string" },
+    date: { type: "date", required: true },
   },
   computedFields,
 }))
@@ -51,4 +39,18 @@ export const Post = defineDocumentType(() => ({
 export default makeSource({
   contentDirPath: "./content",
   documentTypes: [Post, Page],
+  mdx: {
+    rehypePlugins: [
+      rehypeSlug,
+      [
+        rehypeAutolinkHeadings,
+        {
+          behavior: "wrap",
+          properties: {
+            className: ["heading-anchor"],
+          },
+        },
+      ],
+    ],
+  },
 })
